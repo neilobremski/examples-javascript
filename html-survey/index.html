@@ -1,0 +1,62 @@
+<html>
+<head>
+    <title>Question Survey</title>
+
+<script>
+var topics = [
+    "peanut butter",
+    "jumping jacks",
+    "crop dusting",
+]
+
+function onCompleteClicked(btn) {
+    var questionElements = document.getElementsByClassName('question');
+    var answers = [];
+    var missing = [];
+    for (var i = 0; i < questionElements.length; i++) {
+        var qele = questionElements[i];
+        var answerValue = qele.value;
+        if (answerValue) {
+            answers.push("Answer to question " + (1 + i) + " (" + topics[i] +
+                         "): " + qele.value);
+        } else {
+            missing.push("You forgot to answer question " + (1 + i) +
+                         " (" + topics[i] + ")!");
+        }
+        qele.disabled = true;  // disallow changes to completed question
+    }
+    if (missing.length > 0) {
+        alert(missing.join("\n"));
+    } else {
+        document.getElementById('complete').innerHTML = answers.join("<br>");
+    }
+}
+
+</script>
+</head>
+<body>
+    <h1>Survey</h1>
+    <h2>Questions</h2>
+    <script>
+        for (var i = 0; i < topics.length; i++) {
+            htmlForQuestion = [
+                "<h3>", (1 + i), ". How likely are you to recommend ",
+                    topics[i], "?</h3>",
+                "<p><select class='question' id='q-", i, "'>",
+                "<option value='' selected='selected'></option>",
+                "<option value='5'>5 - Definitely</option>",
+                "<option value='4'>4 - Probably</option>",
+                "<option value='3'>3 - Maybe</option>",
+                "<option value='2'>2 - Unlikely</option>",
+                "<option value='1'>1 - Never</option>",
+                "</select></p>",
+            ].join("");
+            document.write(htmlForQuestion);
+        }
+    </script>
+    <h2>Complete</h2>
+    <p id="complete">
+        <input type="button" onclick="onCompleteClicked(this);" value="Complete">
+    </p>
+</body>
+</html>
