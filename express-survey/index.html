@@ -1,0 +1,85 @@
+<html>
+<head>
+<title>jQuery POST Survey Example</title>
+<script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.js"></script>
+<script>
+var topics = [
+    "peanut butter",
+    "jumping jacks",
+    "crop dusting",
+]
+
+function postToServer() {
+ 
+    var questionElements = document.getElementsByClassName('question');
+    var answers = [];
+    var missing = [];
+    for (var i = 0; i < questionElements.length; i++) {
+        var qele = questionElements[i];
+        var answerValue = qele.value;
+        if (answerValue) {
+            answers.push(qele.value);
+        } else {
+            missing.push("You forgot to answer question " + (1 + i) +
+                         " (" + topics[i] + ")!");
+        }
+        qele.disabled = true;  // disallow changes to completed question
+    }
+    if (missing.length > 0) {
+        alert(missing.join("\n"));
+        return false;  // abort abort!
+    }
+
+    var request = {
+        topics: topics,
+        answers: answers,
+    }
+
+    $.post("/post", request, function(response, textStatus) {
+        console.log("[POST] response recv " + (new Date()));
+        console.log(response);
+        $("#complete").html(response.message);
+    });
+
+    console.log("[POST] request sent " + (new Date()));
+}
+
+$(document).ready(function() {
+    console.log("Document ready!");
+
+    // attach click handler function
+    $("#completeButton").on('click', function() {
+        console.log("Complete clicked!");
+        postToServer();
+    });
+});
+
+
+</script>
+</head>
+<body>
+    <h1>Survey</h1>
+    <h2>Questions</h2>
+    <script>
+        for (var i = 0; i < topics.length; i++) {
+            htmlForQuestion = [
+                "<h3>", (1 + i), ". How likely are you to recommend ",
+                    topics[i], "?</h3>",
+                "<p><select class='question' id='q-", i, "'>",
+                "<option value='' selected='selected'></option>",
+                "<option value='5'>5 - Definitely</option>",
+                "<option value='4'>4 - Probably</option>",
+                "<option value='3'>3 - Maybe</option>",
+                "<option value='2'>2 - Unlikely</option>",
+                "<option value='1'>1 - Never</option>",
+                "</select></p>",
+            ].join("");
+            document.write(htmlForQuestion);
+        }
+    </script>
+    <h2>Complete</h2>
+    <p id="complete">
+        <input id="completeButton" type="button" value="Complete">
+    </p>
+</body>
+</html>
